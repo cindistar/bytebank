@@ -1,40 +1,34 @@
+import 'package:bytebank/models/transferencias.dart';
+import 'package:bytebank/screens/transferencia/formulario.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/transferencia.dart';
-import 'formulario.dart';
 
 const _tituloAppBar = 'Transferências';
 
-class ListaTransferencias extends StatefulWidget {
-  final List<Transferencia> _transferencias = [];
-  @override
-  _ListaTransferenciasState createState() => _ListaTransferenciasState();
-}
-
-class _ListaTransferenciasState extends State<ListaTransferencias> {
+class ListaTransferencias extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_tituloAppBar),
       ),
+      body: Consumer<Transferencias>(builder: (context, transferencias, child) {
+        return ListView.builder(
+          itemCount: transferencias.transferencias.length,
+          itemBuilder: (context, index) {
+            final transferencia = transferencias.transferencias[index];
+            return ItemTransferencia(transferencia);
+          },
+        );
+      }),
       floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return FormularioTransferencia();
-          })).then((transferenciaRecebida) {
-            setState(() {
-              widget._transferencias.add(transferenciaRecebida!);
-            });
-          });
-        },
-        child: Icon(Icons.add),
-      ),
-      body: ListView.builder(
-        itemCount: widget._transferencias.length,
-        itemBuilder: (context, index) {
-          final transferencia = widget._transferencias[index];
-          return ItemTransferencia(transferencia);
+          }));
         },
       ),
     );
@@ -49,10 +43,10 @@ class ItemTransferencia extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        leading: Icon(Icons.monetization_on),
-        title: Text(_transferencia.valor.toString()),
-        subtitle: Text(_transferencia.numeroConta.toString()),
+        child: ListTile(
+      leading: Icon(Icons.monetization_on),
+      title: Text(_transferencia.toStringValor()),
+        subtitle: Text(_transferencia.toStringConta()),
       ),
     );
   }
